@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="./promptpay-qr.js"></script>
+  <script src="./qrcode.min.js"></script>
+</head>
+
+<body>
+  <div id="qrcode"></div>
+
+  <script type="text/javascript">
+
+    var qr_dom = document.getElementById('qrcode');
+
+    // function render_qr() {
+    //   const params = new URLSearchParams(window.location.search);
+    //   var str = params.get('id');
+    //   const valueStr = str.split('!');
+    //   var acc_id = valueStr[0];
+    //   var amount = valueStr[1];
+    //   var txt = PromptPayQR.gen_text(acc_id, amount);
+
+    //   qr_dom.innerHTML = "";
+    //   if (txt) {
+    //     new QRCode(qr_dom, txt);
+    //   }
+    // }
+    
+    function render_qr() {
+        const params = new URLSearchParams(window.location.search);
+        var str = params.get('id');
+        const valueStr = str.split('!');
+        var acc_id = valueStr[0];
+        var amount = valueStr[1];
+        var txt = PromptPayQR.gen_text(acc_id, amount);
+
+        qr_dom.innerHTML = ""; 
+        if (txt) {
+          new QRCode(qr_dom, {
+            text: txt,
+            width: 300,
+            height: 300,
+            correctLevel: QRCode.CorrectLevel.H
+          });
+
+          setTimeout(() => { 
+            var canvas = qr_dom.querySelector('canvas');
+            if (canvas) {
+              var dataUri = canvas.toDataURL();
+              const aStr = dataUri.split(',');
+              qr_dom.innerHTML = aStr[1]; 
+            }
+          }, 100); 
+        }
+      }
+
+    function dataURItoBlob(dataURI) {
+      var byteString = atob(dataURI.split(',')[1]);
+
+      var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+      var ab = new ArrayBuffer(byteString.length);
+
+      var ia = new Uint8Array(ab);
+
+      for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+
+      var blob = new Blob([ab], { type: mimeString });
+      return blob;
+
+    }
+
+    function download() {
+      let b64 = document.getElementsByTagName('img')[0].src;
+      if (!b64) b64 = document.getElementsByTagName('canvas')[0].toDataURL();
+      if (!b64) {
+        alert("Cannot find QR Image");
+        return;
+      }
+      let blob = dataURItoBlob(b64);
+      saveAs(blob, "download.png");
+    }
+
+    window.onload = render_qr;
+
+  </script>
+
+</body>
+
+</html>
