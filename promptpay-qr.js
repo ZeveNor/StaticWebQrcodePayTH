@@ -66,28 +66,27 @@ var PromptPayQR = {
     var pp_amount = '';
     var pp_chksum = '';
 
-    // process acc_id
-    if (!acc_id) { // acc_id not found
+    if (!acc_id) { 
       return null;
     }
-    else if (acc_id.match(/^\d{15}$/)) { // truemoney e-wallet
+    else if (acc_id.match(/^\d{15}$/)) { 
       pp_acc_id = '0315' + acc_id;
     }
-    else if (acc_id.match(/^\d{13}$/)) { // card-id
+    else if (acc_id.match(/^\d{13}$/)) { 
       pp_acc_id = '0213' + acc_id;
     }
-    else if (acc_id.match(/^\d{10}$/)) { // tel-no
+    else if (acc_id.match(/^\d{10}$/)) { 
       pp_acc_id = '01130066' + acc_id.substr(1);
     }
-    else { // invalid acc_id
+    else { 
       return null;
     }
-    // process amount
+   
     if (amount) {
       amount = amount.toString();
       pp_amount = '54' + ('00' + amount.length).slice(-2) + amount;
     }
-    // build pp string
+   
     var field_29 = "0016A000000677010111" + pp_acc_id;
     var pp_str = "000201010211"
       + "29" + field_29.length + field_29
@@ -95,7 +94,7 @@ var PromptPayQR = {
       + pp_amount
       + "5802TH"
       + "6304";
-    // process checksum
+    
     pp_chksum = this.checksum(pp_str);
     pp_str += pp_chksum;
     return pp_str;
